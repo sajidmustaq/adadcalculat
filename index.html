@@ -147,108 +147,140 @@ const abjadMap = {
     'غ': 1000
 };
 
-// 2. 99 Names of Allah with Meanings & Values
+// Helper: normalize Arabic/Urdu text (remove diacritics, normalize similar letters)
+function normalizeArabic(text) {
+    if (!text) return '';
+    // remove tashkeel/diacritics and tatweel and LTR/RLT marks
+    let t = text.replace(/[\u0610-\u061A\u064B-\u065F\u0670\u06D6-\u06ED\u0640\u200E\u200F]/g, '');
+    // map variants to forms used in abjadMap
+    t = t.replace(/[أإٱآ]/g, 'ا')
+         .replace(/ي/g, 'ی')
+         .replace(/ى/g, 'ی')
+         .replace(/ك/g, 'ک')
+         .replace(/ه/g, 'ہ')
+         .replace(/ة/g, 'ہ')
+         .replace(/[ؤ]/g, 'و')
+         .replace(/ئ/g, 'ی')
+         .replace(/ٰ/g, ''); // remove superscript alif
+    return t;
+}
+
+function computeValue(text) {
+    const normalized = normalizeArabic(text);
+    let total = 0;
+    for (let ch of normalized) {
+        if (abjadMap[ch]) total += abjadMap[ch];
+    }
+    return total;
+}
+
+// 2. 99 Names of Allah with Meanings & Values (values will be recalculated)
 const allahNames = [
-    {id: 1, name: "الرَّحْمٰنُ", translation: "بے حد رحم کرنے والا", value: 298},
-    {id: 2, name: "الرَّحِيمُ", translation: "نہایت مہربان", value: 258},
-    {id: 3, name: "الْمَلِكُ", translation: "حقیقی بادشاہ", value: 90},
-    {id: 4, name: "الْقُدُّوسُ", translation: "ہر عیب سے پاک", value: 170},
-    {id: 5, name: "السَّلَامُ", translation: "سلامتی دینے والا", value: 131},
-    {id: 6, name: "الْمُؤْمِنُ", translation: "امان دینے والا", value: 136},
-    {id: 7, name: "الْمُهَيْمِنُ", translation: "نگہبان و حفاظت کرنے والا", value: 145},
-    {id: 8, name: "الْعَزِيزُ", translation: "غالب اور زبردست", value: 94},
-    {id: 9, name: "الْجَبَّارُ", translation: "عظمت والا / نقصان پورا کرنے والا", value: 206},
-    {id: 10, name: "الْمُتَکَبِّرُ", translation: "بزرگی والا", value: 662},
-    {id: 11, name: "الْخَالِقُ", translation: "پیدا کرنے والا", value: 731},
-    {id: 12, name: "الْبَارِئُ", translation: "ٹھیک بنانے والا", value: 213},
-    {id: 13, name: "الْمُصَوِّرُ", translation: "صورت گری کرنے والا", value: 336},
-    {id: 14, name: "الْغَفَّارُ", translation: "بہت بخشنے والا", value: 1281},
-    {id: 15, name: "الْقَهَّارُ", translation: "سب پر غالب", value: 306},
-    {id: 16, name: "الْوَهَّابُ", translation: "بے حساب دینے والا", value: 14},
-    {id: 17, name: "الرَّزَّاقُ", translation: "رزق دینے والا", value: 308},
-    {id: 18, name: "الْفَتَّاحُ", translation: "مشکلات کشا / کھولنے والا", value: 489},
-    {id: 19, name: "الْعَلِيمُ", translation: "سب کچھ جاننے والا", value: 150},
-    {id: 20, name: "الْقَابِضُ", translation: "تنگ کرنے والا", value: 903},
-    {id: 21, name: "الْبَاسِطُ", translation: "کشادہ کرنے والا", value: 72},
-    {id: 22, name: "الْخَافِضُ", translation: "پست کرنے والا", value: 1481},
-    {id: 23, name: "الرَّافِعُ", translation: "بلند کرنے والا", value: 351},
-    {id: 24, name: "الْمُعِزُّ", translation: "عزت دینے والا", value: 117},
-    {id: 25, name: "الْمُذِلُّ", translation: "ذلیل کرنے والا", value: 770},
-    {id: 26, name: "السَّمِيعُ", translation: "سب کچھ سننے والا", value: 420},
-    {id: 27, name: "الْبَصِيرُ", translation: "سب کچھ دیکھنے والا", value: 302},
-    {id: 28, name: "الْحَکَمُ", translation: "فیصلہ کرنے والا", value: 68},
-    {id: 29, name: "الْعَدْلُ", translation: "انصاف کرنے والا", value: 114},
-    {id: 30, name: "اللَّطِيفُ", translation: "باریک بین و مہربان", value: 129},
-    {id: 31, name: "الْخَبِирُ", translation: "خبر رکھنے والا", value: 812},
-    {id: 32, name: "الْحَلِيمُ", translation: "بردبار", value: 88},
-    {id: 33, name: "الْعَظِيمُ", translation: "عظمت والا", value: 1020},
-    {id: 34, name: "الْغَفُورُ", translation: "معاف کرنے والا", value: 1286},
-    {id: 35, name: "الشَّکُورُ", translation: "قدردان", value: 526},
-    {id: 36, name: "الْعَلِيُّ", translation: "بلند مرتبہ", value: 110},
-    {id: 37, name: "الْكَبِيرُ", translation: "سب سے بڑا", value: 232},
-    {id: 38, name: "الْحَفِيظُ", translation: "حفاظت کرنے والا", value: 998},
-    {id: 39, name: "الْمُقِيتُ", translation: "روزی اور توانائی دینے والا", value: 550},
-    {id: 40, name: "الْحَسِيبُ", translation: "کفایت کرنے والا / حساب لینے والا", value: 80},
-    {id: 41, name: "الْجَلِيلُ", translation: "بزرگ و عالی شان", value: 73},
-    {id: 42, name: "الْكَرِيمُ", translation: "کرم کرنے والا", value: 270},
-    {id: 43, name: "الرَّقِیبُ", translation: "نگران", value: 312},
-    {id: 44, name: "الْمُجِیبُ", translation: "دعائیں قبول کرنے والا", value: 55},
-    {id: 45, name: "الْوَاسِعُ", translation: "وسعت رکھنے والا", value: 137},
-    {id: 46, name: "الْحَکِيمُ", translation: "حکمت والا", value: 78},
-    {id: 47, name: "الْوَدُودُ", translation: "محبت کرنے والا", value: 20},
-    {id: 48, name: "الْمَجِیدُ", translation: "بزرگی والا", value: 57},
-    {id: 49, name: "الْبَاعِثُ", translation: "دوبارہ اٹھانے والا", value: 573},
-    {id: 50, name: "الشَّهِидُ", translation: "حاضر و ناظر", value: 319},
-    {id: 51, name: "الْحَقُّ", translation: "سچا اور قائم", value: 108},
-    {id: 52, name: "الْوَکِيلُ", translation: "کارساز", value: 66},
-    {id: 53, name: "الْقَوِيُّ", translation: "قوت والا", value: 116},
-    {id: 54, name: "الْمَتِينُ", translation: "مضبوط", value: 500},
-    {id: 55, name: "الْوَلِيُّ", translation: "دوست و مددگار", value: 46},
-    {id: 56, name: "الْحَمِيدُ", translation: "تعریف کے لائق", value: 62},
-    {id: 57, name: "الْمُحْصِي", translation: "شمار کرنے والا", value: 148},
-    {id: 58, name: "الْمُبْدِئُ", translation: "پہلی بار پیدا کرنے والا", value: 56},
-    {id: 59, name: "الْمُعِيدُ", translation: "دوبارہ پیدا کرنے والا", value: 124},
-    {id: 60, name: "الْمُحْيِي", translation: "زندگی دینے والا", value: 68},
-    {id: 61, name: "الْمُمِيتُ", translation: "موت دینے والا", value: 490},
-    {id: 62, name: "الْحَيُّ", translation: "ہمیشہ زندہ رہنے والا", value: 18},
-    {id: 63, name: "الْقَيُّومُ", translation: "سب کو قائم رکھنے والا", value: 156},
-    {id: 64, name: "الْوَاجِدُ", translation: "ہر چیز پانے والا", value: 14},
-    {id: 65, name: "الْمَاجِدُ", translation: "بزرگی والا", value: 48},
-    {id: 66, name: "الْوَاحِدُ", translation: "ایک (تنہا)", value: 19},
-    {id: 67, name: "الْأَحَدُ", translation: "یکتا", value: 13},
-    {id: 68, name: "الصَّمَدُ", translation: "بے نیاز", value: 134},
-    {id: 69, name: "الْقَادِرُ", translation: "قدرت رکھنے والا", value: 305},
-    {id: 70, name: "الْمُقْتَدِرُ", translation: "کامل قدرت والا", value: 744},
-    {id: 71, name: "الْمُقَدِّمُ", translation: "آگے کرنے والا", value: 184},
-    {id: 72, name: "الْمُؤَخِّرُ", translation: "پیچھے کرنے والا", value: 847},
-    {id: 73, name: "الْأَوَّلُ", translation: "سب سے پہلا", value: 37},
-    {id: 74, name: "الْآخِرُ", translation: "سب کے بعد رہنے والا", value: 801},
-    {id: 75, name: "الظَّاہِرُ", translation: "ظاہر و عیاں", value: 1106},
-    {id: 76, name: "الْبَاطِنُ", translation: "پوشیدہ", value: 62},
-    {id: 77, name: "الْوَالِي", translation: "مالک و سرپرست", value: 47},
-    {id: 78, name: "الْمُتَعَالِي", translation: "بہت بلند", value: 541},
-    {id: 79, name: "الْبَرُّ", translation: "احسان کرنے والا", value: 202},
-    {id: 80, name: "التَّوَّابُ", translation: "توبہ قبول کرنے والا", value: 409},
-    {id: 81, name: "الْمُنْتَقِمُ", translation: "بدلہ لینے والا", value: 630},
-    {id: 82, name: "الْعَفُوُّ", translation: "معاف کرنے والا", value: 156},
-    {id: 83, name: "الرَّؤُوفُ", translation: "شفقت کرنے والا", value: 287},
-    {id: 84, name: "مَالِکُ الْمُلْکِ", translation: "ملک کا مالک", value: 212},
-    {id: 85, name: "ذُو الْجَلَالِ وَالْإِکْرَامِ", translation: "عظمت اور جلال والا", value: 1100},
-    {id: 86, name: "الْمُقْسِطُ", translation: "عدل کرنے والا", value: 209},
-    {id: 87, name: "الْجَامِعُ", translation: "جمع کرنے والا", value: 114},
-    {id: 88, name: "الْغَنِيُّ", translation: "خود مختیار / بے نیاز", value: 1060},
-    {id: 89, name: "الْمُغْنِي", translation: "غنی کرنے والا", value: 1100},
-    {id: 90, name: "الْمَانِعُ", translation: "روکنے والا", value: 161},
-    {id: 91, name: "الضَّارُّ", translation: "نقصان پہنچانے والا", value: 1001},
-    {id: 92, name: "النَّافِعُ", translation: "نفع پہنچانے والا", value: 201},
-    {id: 93, name: "النُّورُ", translation: "منور کرنے والا", value: 256},
-    {id: 94, name: "الْہَادِي", translation: "ہدایت دینے والا", value: 20},
-    {id: 95, name: "الْبَدِيعُ", translation: "انوکھا پیدا کرنے والا", value: 86},
-    {id: 96, name: "الْبَاقِي", translation: "ہمیشہ رہنے والا", value: 113},
-    {id: 97, name: "الْوَارِثُ", translation: "سب کا وارث", value: 707},
-    {id: 98, name: "الرَّشِيدُ", translation: "سیدھی راہ دکھانے والا", value: 514},
-    {id: 99, name: "الصَّبُورُ", translation: "صبر کرنے والا", value: 298}
+    {id: 1, name: "الرَّحْمٰنُ", translation: "بے حد رحم کرنے والا", value: null},
+    {id: 2, name: "الرَّحِيمُ", translation: "نہایت مہربان", value: null},
+    {id: 3, name: "الْمَلِكُ", translation: "حقیقی بادشاہ", value: null},
+    {id: 4, name: "الْقُدُّوسُ", translation: "ہر عیب سے پاک", value: null},
+    {id: 5, name: "السَّلَامُ", translation: "سلامتی دینے والا", value: null},
+    {id: 6, name: "الْمُؤْمِنُ", translation: "امان دینے والا", value: null},
+    {id: 7, name: "الْمُهَيْمِنُ", translation: "نگہبان و حفاظت کرنے والا", value: null},
+    {id: 8, name: "الْعَزِيزُ", translation: "غالب اور زبردست", value: null},
+    {id: 9, name: "الْجَبَّارُ", translation: "عظمت والا / نقصان پورا کرنے والا", value: null},
+    {id: 10, name: "الْمُتَکَبِّرُ", translation: "بزرگی والا", value: null},
+    {id: 11, name: "الْخَالِقُ", translation: "پیدا کرنے والا", value: null},
+    {id: 12, name: "الْبَارِئُ", translation: "ٹھیک بنانے والا", value: null},
+    {id: 13, name: "الْمُصَوِّرُ", translation: "صورت گری کرنے والا", value: null},
+    {id: 14, name: "الْغَفَّارُ", translation: "بہت بخشنے والا", value: null},
+    {id: 15, name: "الْقَهَّارُ", translation: "سب پر غالب", value: null},
+    {id: 16, name: "الْوَهَّابُ", translation: "بے حساب دینے والا", value: null},
+    {id: 17, name: "الرَّزَّاقُ", translation: "رزق دینے والا", value: null},
+    {id: 18, name: "الْفَتَّاحُ", translation: "مشکلات کشا / کھولنے والا", value: null},
+    {id: 19, name: "الْعَلِيمُ", translation: "سب کچھ جاننے والا", value: null},
+    {id: 20, name: "الْقَابِضُ", translation: "تنگ کرنے والا", value: null},
+    {id: 21, name: "الْبَاسِطُ", translation: "کشادہ کرنے والا", value: null},
+    {id: 22, name: "الْخَافِضُ", translation: "پست کرنے والا", value: null},
+    {id: 23, name: "الرَّافِعُ", translation: "بلند کرنے و��لا", value: null},
+    {id: 24, name: "الْمُعِزُّ", translation: "عزت دینے والا", value: null},
+    {id: 25, name: "الْمُذِلُّ", translation: "ذلیل کرنے والا", value: null},
+    {id: 26, name: "السَّمِيعُ", translation: "سب کچھ سننے والا", value: null},
+    {id: 27, name: "الْبَصِيرُ", translation: "سب کچھ دیکھنے والا", value: null},
+    {id: 28, name: "الْحَکَمُ", translation: "فیصلہ کرنے والا", value: null},
+    {id: 29, name: "الْعَدْلُ", translation: "انصاف کرنے والا", value: null},
+    {id: 30, name: "اللَّطِيفُ", translation: "باریک بین و مہربان", value: null},
+    {id: 31, name: "الْخَبِيرُ", translation: "خبر رکھنے والا", value: null},
+    {id: 32, name: "الْحَلِيمُ", translation: "بردبار", value: null},
+    {id: 33, name: "الْعَظِيمُ", translation: "عظمت والا", value: null},
+    {id: 34, name: "الْغَفُورُ", translation: "معاف کرنے والا", value: null},
+    {id: 35, name: "الشَّکُورُ", translation: "قدردان", value: null},
+    {id: 36, name: "الْعَلِيُّ", translation: "بلند مرتبہ", value: null},
+    {id: 37, name: "الْكَبِيرُ", translation: "سب سے بڑا", value: null},
+    {id: 38, name: "الْحَفِيظُ", translation: "حفاظت کرنے والا", value: null},
+    {id: 39, name: "الْمُقِيتُ", translation: "روزی اور توانائی دینے والا", value: null},
+    {id: 40, name: "الْحَسِيبُ", translation: "کفایت کرنے والا / حساب لینے والا", value: null},
+    {id: 41, name: "الْجَلِيلُ", translation: "بزرگ و عالی شان", value: null},
+    {id: 42, name: "الْكَرِيمُ", translation: "کرم کرنے والا", value: null},
+    {id: 43, name: "الرَّقِیبُ", translation: "نگران", value: null},
+    {id: 44, name: "الْمُجِیبُ", translation: "دعائیں قبول کرنے والا", value: null},
+    {id: 45, name: "الْوَاسِعُ", translation: "وسعت رکھنے والا", value: null},
+    {id: 46, name: "الْحَکِيمُ", translation: "حکمت والا", value: null},
+    {id: 47, name: "الْوَدُودُ", translation: "محبت کرنے والا", value: null},
+    {id: 48, name: "الْمَجِیدُ", translation: "بزرگی والا", value: null},
+    {id: 49, name: "الْبَاعِثُ", translation: "دوبارہ اٹھانے والا", value: null},
+    {id: 50, name: "الشَّهِیدُ", translation: "حاضر و ناظر", value: null},
+    {id: 51, name: "الْحَقُّ", translation: "سچا اور قائم", value: null},
+    {id: 52, name: "الْوَکِيلُ", translation: "کارساز", value: null},
+    {id: 53, name: "الْقَوِيُّ", translation: "قوت والا", value: null},
+    {id: 54, name: "الْمَتِينُ", translation: "مضبوط", value: null},
+    {id: 55, name: "الْوَلِيُّ", translation: "دوست و مددگار", value: null},
+    {id: 56, name: "الْحَمِيدُ", translation: "تعریف کے لائق", value: null},
+    {id: 57, name: "الْمُحْصِي", translation: "شمار کرنے والا", value: null},
+    {id: 58, name: "الْمُبْدِئُ", translation: "پہلی بار پیدا کرنے والا", value: null},
+    {id: 59, name: "الْمُعِيدُ", translation: "دوبارہ پیدا کرنے والا", value: null},
+    {id: 60, name: "الْمُحْيِي", translation: "زندگی دینے والا", value: null},
+    {id: 61, name: "الْمُمِيتُ", translation: "موت دینے والا", value: null},
+    {id: 62, name: "الْحَيُّ", translation: "ہمیشہ زندہ رہنے والا", value: null},
+    {id: 63, name: "الْقَيُّومُ", translation: "سب کو قائم رکھنے والا", value: null},
+    {id: 64, name: "الْوَاجِدُ", translation: "ہر چیز پانے والا", value: null},
+    {id: 65, name: "الْمَاجِدُ", translation: "بزرگی والا", value: null},
+    {id: 66, name: "الْوَاحِدُ", translation: "ایک (تنہا)", value: null},
+    {id: 67, name: "الْأَحَدُ", translation: "یکتا", value: null},
+    {id: 68, name: "الصَّمَدُ", translation: "بے نیاز", value: null},
+    {id: 69, name: "الْقَادِرُ", translation: "قدرت رکھنے والا", value: null},
+    {id: 70, name: "الْمُقْتَدِرُ", translation: "کامل قدرت والا", value: null},
+    {id: 71, name: "الْمُقَدِّمُ", translation: "آگے کرنے والا", value: null},
+    {id: 72, name: "الْمُؤَخِّرُ", translation: "پیچھے کرنے والا", value: null},
+    {id: 73, name: "الْأَوَّلُ", translation: "سب سے پہلا", value: null},
+    {id: 74, name: "الْآخِرُ", translation: "سب کے بعد رہنے والا", value: null},
+    {id: 75, name: "الظَّاہِرُ", translation: "ظاہر و عیاں", value: null},
+    {id: 76, name: "الْبَاطِنُ", translation: "پوشیدہ", value: null},
+    {id: 77, name: "الْوَالِي", translation: "مالک و سرپرست", value: null},
+    {id: 78, name: "الْمُتَعَالِي", translation: "بہت بلند", value: null},
+    {id: 79, name: "الْبَرُّ", translation: "احسان کرنے والا", value: null},
+    {id: 80, name: "التَّوَّابُ", translation: "توبہ قبول کرنے والا", value: null},
+    {id: 81, name: "الْمُنْتَقِمُ", translation: "بدلہ لینے والا", value: null},
+    {id: 82, name: "الْعَفُوُّ", translation: "معاف کرنے والا", value: null},
+    {id: 83, name: "الرَّؤُوفُ", translation: "شفقت کرنے والا", value: null},
+    {id: 84, name: "مَالِکُ الْمُلْکِ", translation: "ملک کا مالک", value: null},
+    {id: 85, name: "ذُو الْجَلَالِ وَالْإِکْرَامِ", translation: "عظمت اور جلال والا", value: null},
+    {id: 86, name: "الْمُقْسِطُ", translation: "عدل کرنے والا", value: null},
+    {id: 87, name: "الْجَامِعُ", translation: "جمع کرنے والا", value: null},
+    {id: 88, name: "الْغَنِيُّ", translation: "خود مختیار / بے نیاز", value: null},
+    {id: 89, name: "الْمُغْنِي", translation: "غنی کرنے والا", value: null},
+    {id: 90, name: "الْمَانِعُ", translation: "روکنے والا", value: null},
+    {id: 91, name: "الضَّارُّ", translation: "نقصان پہنچانے والا", value: null},
+    {id: 92, name: "النَّافِعُ", translation: "نفع پہنچانے والا", value: null},
+    {id: 93, name: "النُّورُ", translation: "منور کرنے والا", value: null},
+    {id: 94, name: "الْہَادِي", translation: "ہدایت دینے والا", value: null},
+    {id: 95, name: "الْبَدِيعُ", translation: "انوکھا پیدا کرنے والا", value: null},
+    {id: 96, name: "الْبَاقِي", translation: "ہمیشہ رہنے والا", value: null},
+    {id: 97, name: "الْوَارِثُ", translation: "سب کا وارث", value: null},
+    {id: 98, name: "الرَّشِيدُ", translation: "سیدھی راہ دکھانے والا", value: null},
+    {id: 99, name: "الصَّبُورُ", translation: "صبر کرنے والا", value: null}
 ];
+
+// Recalculate and assign values to ensure correctness
+allahNames.forEach(item => {
+    item.value = computeValue(item.name);
+});
 
 // 3. Calculator Function
 function calculateAbjad() {
@@ -256,7 +288,9 @@ function calculateAbjad() {
     let total = 0;
     let breakdownHtml = '';
 
-    for (let char of text) {
+    const normalized = normalizeArabic(text);
+
+    for (let char of normalized) {
         if (char.trim() === '') continue; // فاصلے (spaces) کو نظر انداز کریں
         if (abjadMap[char]) {
             const val = abjadMap[char];
@@ -364,9 +398,9 @@ function findIsmAzam(nameTotal) {
     }
 
     if (!foundAny) {
-        html += `<p style="color: #c0392b;">اس عدد (${target}) کے مطابق کوئی اسم یا مجموعہ نہیں ملا (زیادہ سے زیادہ ${MAX_NAMES} اسماء تک تلاش کی گئی)۔</p>`;
+        html += `<p style="color: #c0392b;">اس عدد (${target}) کے مطابق کوئی اسم یا مجموعہ نہیں ملا (زیادہ سے زیادہ ${MAX_NAMES} اسماء تک تلاش کی گئی).</p>`;
     } else {
-        html += `<p style="color: #1a5276; font-size: 14px; margin-top: 10px;">(نوٹ: براؤزر کی کارکردگی بہتر رکھنے کے لیے ہر کیٹیگری میں زیادہ سے زیادہ ${MAX_COMBINATIONS_PER_LEVEL} نتائج دکھائے گئے ہیں)</p>`;
+        html += `<p style="color: #1a5276; font-size: 14px; margin-top: 10px;">(نوٹ: براؤزر کی کارکردگی محفوظ رکھنے کے لیے ہر کیٹیگری میں نتائج محدود کیے گئے ہیں.)</p>`;
     }
 
     ismDetails.innerHTML = html;
@@ -389,12 +423,19 @@ function renderNamesTable(data) {
 
 // 6. Advanced Search Function (Search by Name, Translation or Numbers)
 function filterNames() {
-    const query = document.getElementById('searchName').value.trim().toLowerCase();
+    const queryRaw = document.getElementById('searchName').value.trim();
+    const query = queryRaw.toLowerCase();
+    const normalizedQuery = normalizeArabic(queryRaw);
+
     const filtered = allahNames.filter(item => {
-        const nameMatch = item.name.includes(query);
-        const translationMatch = item.translation.includes(query);
+        const nameNorm = normalizeArabic(item.name);
+        const nameMatch = normalizedQuery !== '' && nameNorm.includes(normalizedQuery);
+        const translationMatch = query !== '' && item.translation.toLowerCase().includes(query);
         const valueMatch = item.value.toString().includes(query);
         const idMatch = item.id.toString() === query;
+
+        // If query is empty, show all
+        if (query === '' && normalizedQuery === '') return true;
 
         return nameMatch || translationMatch || valueMatch || idMatch;
     });
