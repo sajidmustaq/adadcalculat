@@ -60,8 +60,9 @@
     <h1>علم الاعداد اور اسماء الحسنیٰ ایپ</h1>
     
     <div class="tab-buttons">
-        <button class="tab-btn active" onclick="switchTab('calculatorTab', this)">اعداد و اسمِ اعظم کیلکولیٹر</button>
-        <button class="tab-btn" onclick="switchTab('namesTab', this)">اسماء الحسنیٰ کی فہرست</button>
+        <button class="tab-btn active" onclick="switchTab('calculatorTab', this)">اعداد و اسمِ اعظم</button>
+        <button class="tab-btn" onclick="switchTab('namesTab', this)">اسماء الحسنیٰ</button>
+        <button class="tab-btn" onclick="switchTab('chartTab', this)">حروفِ ابجد چارٹ</button>
     </div>
 
     <div id="calculatorTab" class="tab-content active">
@@ -96,6 +97,11 @@
                     </tbody>
             </table>
         </div>
+    </div>
+
+    <div id="chartTab" class="tab-content">
+        <h2 style="text-align: center; color: #1a5276; margin-bottom: 20px;">علم الاعداد (حروفِ ابجد) کا چارٹ</h2>
+        <div class="letters-breakdown" id="abjadChartGrid"></div>
     </div>
 </div>
 
@@ -394,8 +400,34 @@ function filterNames() {
     renderNamesTable(filtered);
 }
 
-// Initial Table Render
+// 7. Render Abjad Chart
+function renderAbjadChart() {
+    const grid = document.getElementById('abjadChartGrid');
+    let html = '';
+    
+    // ہم صرف منفرد اور بنیادی حروف دکھائیں گے تاکہ چارٹ خوبصورت اور پڑھنے میں آسان ہو
+    const displayChars = [
+        'ا', 'ب', 'ج', 'د', 'ہ', 'و', 'ز', 'ح', 'ط', 'ی', 
+        'ک', 'ل', 'م', 'ن', 'س', 'ع', 'ف', 'ص', 'ق', 'ر', 
+        'ش', 'ت', 'ث', 'خ', 'ذ', 'ض', 'ظ', 'غ',
+        'پ', 'چ', 'ڈ', 'ڑ', 'ژ', 'گ', 'ٹ', 'ے', 'ں'
+    ];
+    
+    displayChars.forEach(char => {
+        if (abjadMap[char]) {
+            html += `<div class="letter-box">
+                <div class="letter-char">${char}</div>
+                <div class="letter-val">${abjadMap[char]}</div>
+            </div>`;
+        }
+    });
+    
+    grid.innerHTML = html;
+}
+
+// Initial Render
 renderNamesTable(allahNames);
+renderAbjadChart();
 </script>
 
 </body>
