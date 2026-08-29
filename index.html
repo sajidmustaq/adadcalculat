@@ -28,12 +28,26 @@
         
         /* 99 Names Table Styling */
         .search-box { width: 100%; padding: 12px; margin-bottom: 15px; border: 2px solid #aed6f1; border-radius: 6px; font-size: 16px; text-align: right; }
-        .table-container { max-height: 500px; overflow-y: auto; border: 1px solid #ddd; border-radius: 6px; }
+        .table-container { max-height: 500px; overflow-y: auto; overflow-x: auto; border: 1px solid #ddd; border-radius: 6px; }
         table { width: 100%; border-collapse: collapse; text-align: center; }
         th, td { padding: 12px; border-bottom: 1px solid #ddd; }
         th { background-color: #1a5276; color: white; position: sticky; top: 0; }
         tr:hover { background-color: #f2f2f2; }
         ul { margin: 5px 0; padding-right: 20px; }
+        
+        /* Responsive Styling */
+        @media (max-width: 768px) {
+            body { padding: 10px; }
+            .container { padding: 15px; }
+            .tab-buttons { flex-direction: column; }
+            .tab-btn { width: 100%; padding: 12px; font-size: 16px; margin-bottom: 5px; }
+            input[type="text"] { width: 100%; }
+            th, td { padding: 8px; font-size: 14px; }
+            .action-btn { width: 100%; }
+            .result { font-size: 18px; }
+            .ism-azam-box { text-align: center; }
+            ul { padding-right: 0; list-style-type: none; }
+        }
     </style>
 </head>
 <body>
@@ -313,9 +327,17 @@ function findIsmAzam(nameTotal) {
             html += `<p><b>${label} (${matchesByCount[count].length}${matchesByCount[count].length >= MAX_COMBINATIONS_PER_LEVEL ? '+' : ''} ملے):</b></p><ul>`;
             
             matchesByCount[count].forEach(combo => {
-                const namesStr = combo.map(item => `<b>${item.name}</b> (${item.translation})`).join(' + ');
-                const valStr = count === 1 ? `اعداد: ${combo[0].value}` : `= <b>${target}</b>`;
-                html += `<li>${namesStr} ${valStr}</li>`;
+                const namesStr = combo.map(item => {
+                    let n = item.name;
+                    if (n.match(/^ال[ْ]?/)) {
+                        n = n.replace(/^ال[ْ]?/, 'یا ');
+                    } else {
+                        n = 'یا ' + n;
+                    }
+                    return `<b>${n}</b>`;
+                }).join(' ');
+                
+                html += `<li>${namesStr}</li>`;
             });
             html += `</ul>`;
         }
