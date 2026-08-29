@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="ur" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>علم الاعداد اور اسماء الحسنیٰ ایپ</title>
+    <style>
+        * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: #f4f7f6; color: #333; margin: 0; padding: 20px; }
+        .container { max-width: 900px; margin: 0 auto; background: #fff; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        h1 { text-align: center; color: #1a5276; margin-bottom: 20px; }
+        
+        /* Tab Navigation Styling */
+        .tab-buttons { display: flex; justify-content: center; margin-bottom: 25px; gap: 10px; }
+        .tab-btn { padding: 12px 30px; font-size: 18px; border: none; background-color: #e5e7e9; color: #333; cursor: pointer; border-radius: 8px; font-weight: bold; transition: 0.3s; }
+        .tab-btn.active { background-color: #1a5276; color: white; }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
+
+        /* Calculator Section */
+        .calculator-box { background: #ebf5fb; padding: 25px; border-radius: 8px; text-align: center; }
+        input[type="text"] { width: 80%; padding: 12px; font-size: 18px; border: 2px solid #aed6f1; border-radius: 6px; text-align: center; margin-bottom: 15px; }
+        button.action-btn { padding: 12px 25px; font-size: 16px; background-color: #1a5276; color: white; border: none; border-radius: 6px; cursor: pointer; transition: 0.3s; }
+        button.action-btn:hover { background-color: #117864; }
+        .result { font-size: 20px; font-weight: bold; margin-top: 15px; color: #117864; }
+        .ism-azam-box { margin-top: 20px; padding: 15px; background: #e8f8f5; border: 1px solid #a3e4d7; border-radius: 8px; text-align: right; }
+        .ism-azam-box h3 { margin-top: 0; color: #117864; text-align: center; }
+        
+        /* 99 Names Table Styling */
+        .search-box { width: 100%; padding: 12px; margin-bottom: 15px; border: 2px solid #aed6f1; border-radius: 6px; font-size: 16px; text-align: right; }
+        .table-container { max-height: 500px; overflow-y: auto; border: 1px solid #ddd; border-radius: 6px; }
+        table { width: 100%; border-collapse: collapse; text-align: center; }
+        th, td { padding: 12px; border-bottom: 1px solid #ddd; }
+        th { background-color: #1a5276; color: white; position: sticky; top: 0; }
+        tr:hover { background-color: #f2f2f2; }
+        ul { margin: 5px 0; padding-right: 20px; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>علم الاعداد اور اسماء الحسنیٰ ایپ</h1>
+    
+    <div class="tab-buttons">
+        <button class="tab-btn active" onclick="switchTab('calculatorTab', this)">اعداد و اسمِ اعظم کیلکولیٹر</button>
+        <button class="tab-btn" onclick="switchTab('namesTab', this)">اسماء الحسنیٰ کی فہرست</button>
+    </div>
+
+    <div id="calculatorTab" class="tab-content active">
+        <div class="calculator-box">
+            <input type="text" id="userInput" placeholder="یہاں اپنا نام یا جملہ لکھیں...">
+            <br>
+            <button class="action-btn" onclick="calculateAbjad()">اعداد اور اسمِ اعظم معلوم کریں</button>
+            <div class="result" id="resultArea">نام کے اعداد: 0</div>
+            
+            <div class="ism-azam-box" id="ismAzamBox" style="display: none;">
+                <h3>مطابق اسمِ اعظم (ہم اعداد اسماء الحسنیٰ)</h3>
+                <div id="ismAzamDetails"></div>
+            </div>
+        </div>
+    </div>
+
+    <div id="namesTab" class="tab-content">
+        <input type="text" id="searchName" class="search-box" placeholder="نام یا اعداد کے ذریعے تلاش کریں..." onkeyup="filterNames()">
+        
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>نمبر</th>
+                        <th>اسم مبارک</th>
+                        <th>ترجمہ (معنی)</th>
+                        <th>اعداد (قیمت)</th>
+                    </tr>
+                </thead>
+                <tbody id="namesTableBody">
+                    </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+// Tab Switching Logic
+function switchTab(tabId, btnElement) {
+    document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+    
+    document.getElementById(tabId).classList.add('active');
+    btnElement.classList.add('active');
+}
+
+// 1. Abjad Mapping Dictionary
+const abjadMap = {
+    'ا': 1, 'ء': 1, 'آ': 1, 'ى': 1, 'ئ': 1, 'ؤ': 1,
+    'ب': 2, 'پ': 2,
+    'ج': 3, 'چ': 3,
+    'د': 4, 'ڈ': 4,
+    'ہ': 5, 'ھ': 5, 'ۃ': 5,
+    'و': 6,
+    'ز': 7, 'ژ': 7,
+    'ح': 8,
+    'ط': 9,
+    'ی': 10, 'ے': 10,
+    'ک': 20, 'گ': 20,
+    'ل': 30,
+    'م': 40,
+    'ن': 50, 'ں': 50,
+    'س': 60,
+    'ع': 70,
+    'ف': 80,
+    'ص': 90,
+    'ق': 100,
+    'ر': 200, 'ڑ': 200,
+    'ش': 300,
+    'ت': 400, 'ٹ': 400,
+    'ث': 500,
+    'خ': 600,
+    'ذ': 700,
+    'ض': 800,
+    'ظ': 900,
+    'غ': 1000
+};
+
+// 2. 99 Names of Allah with Meanings & Values
+const allahNames = [
+    {id: 1, name: "الرَّحْمٰنُ", translation: "بے حد رحم کرنے والا", value: 298},
+    {id: 2, name: "الرَّحِيمُ", translation: "نہایت مہربان", value: 258},
+    {id: 3, name: "الْمَلِكُ", translation: "حقیقی بادشاہ", value: 90},
+    {id: 4, name: "الْقُدُّوسُ", translation: "ہر عیب سے پاک", value: 170},
+    {id: 5, name: "السَّلَامُ", translation: "سلامتی دینے والا", value: 131},
+    {id: 6, name: "الْمُؤْمِنُ", translation: "امان دینے والا", value: 136},
+    {id: 7, name: "الْمُهَيْمِنُ", translation: "نگہبان و حفاظت کرنے والا", value: 145},
+    {id: 8, name: "الْعَزِيزُ", translation: "غالب اور زبردست", value: 94},
+    {id: 9, name: "الْجَبَّارُ", translation: "عظمت والا / نقصان پورا کرنے والا", value: 206},
+    {id: 10, name: "الْمُتَكَبِّرُ", translation: "بزرگی والا", value: 662},
+    {id: 11, name: "الْخَالِقُ", translation: "پیدا کرنے والا", value: 731},
+    {id: 12, name: "الْبَارِئُ", translation: "ٹھیک بنانے والا", value: 213},
+    {id: 13, name: "الْمُصَوِّرُ", translation: "صورت گری کرنے والا", value: 336},
+    {id: 14, name: "الْغَفَّارُ", translation: "بہت بخشنے والا", value: 1281},
+    {id: 15, name: "الْقَهَّارُ", translation: "سب پر غالب", value: 306},
+    {id: 16, name: "الْوَهَّابُ", translation: "بے حساب دینے والا", value: 14},
+    {id: 17, name: "الرَّزَّاقُ", translation: "رزق دینے والا", value: 308},
+    {id: 18, name: "الْفَتَّاحُ", translation: "مشکلات کشا / کھولنے والا", value: 489},
+    {id: 19, name: "الْعَلِيمُ", translation: "سب کچھ جاننے والا", value: 150},
+    {id: 20, name: "الْقَابِضُ", translation: "تنگ کرنے والا", value: 903},
+    {id: 21, name: "الْبَاسِطُ", translation: "کشادہ کرنے والا", value: 72},
+    {id: 22, name: "الْخَافِضُ", translation: "پست کرنے والا", value: 1481},
+    {id: 23, name: "الرَّافِعُ", translation: "بلند کرنے والا", value: 351},
+    {id: 24, name: "الْمُعِزُّ", translation: "عزت دینے والا", value: 117},
+    {id: 25, name: "الْمُذِلُّ", translation: "ذلیل کرنے والا", value: 770},
+    {id: 26, name: "السَّمِيعُ", translation: "سب کچھ سننے والا", value: 420},
+    {id: 27, name: "الْبَصِيرُ", translation: "سب کچھ دیکھنے والا", value: 302},
+    {id: 28, name: "الْحَكَمُ", translation: "فیصلہ کرنے والا", value: 68},
+    {id: 29, name: "الْعَدْلُ", translation: "انصاف کرنے والا", value: 114},
+    {id: 30, name: "اللَّطِيفُ", translation: "باریک بین و مہربان", value: 129},
+    {id: 31, name: "الْخَبِيرُ", translation: "خبر رکھنے والا", value: 812},
+    {id: 32, name: "الْحَلِيمُ", translation: "بردبار", value: 88},
+    {id: 33, name: "الْعَظِيمُ", translation: "عظمت والا", value: 1020},
+    {id: 34, name: "الْغَفُورُ", translation: "معاف کرنے والا", value: 1286},
+    {id: 35, name: "الشَّكُورُ", translation: "قدردان", value: 526},
+    {id: 36, name: "الْعَلِيُّ", translation: "بلند مرتبہ", value: 110},
+    {id: 37, name: "الْكَبِيرُ", translation: "سب سے بڑا", value: 232},
+    {id: 38, name: "الْحَفِيظُ", translation: "حفاظت کرنے والا", value: 998},
+    {id: 39, name: "الْمُقِيتُ", translation: "روزی اور توانائی دینے والا", value: 550},
+    {id: 40, name: "الْحَسِيبُ", translation: "کفایت کرنے والا / حساب لینے والا", value: 80},
+    {id: 41, name: "الْجَلِيلُ", translation: "بزرگ و عالی شان", value: 73},
+    {id: 42, name: "الْكَرِيمُ", translation: "کرم کرنے والا", value: 270},
+    {id: 43, name: "الرَّقِيبُ", translation: "نگران", value: 312},
+    {id: 44, name: "الْمُجِيبُ", translation: "دعائیں قبول کرنے والا", value: 55},
+    {id: 45, name: "الْوَاسِعُ", translation: "وسعت رکھنے والا", value: 137},
+    {id: 46, name: "الْحَكِيمُ", translation: "حکمت والا", value: 78},
+    {id: 47, name: "الْوَدُودُ", translation: "محبت کرنے والا", value: 20},
+    {id: 48, name: "الْمَجِيدُ", translation: "بزرگی والا", value: 57},
+    {id: 49, name: "الْبَاعِثُ", translation: "دوبارہ اٹھانے والا", value: 573},
+    {id: 50, name: "الشَّهِيدُ", translation: "حاضر و ناظر", value: 319},
+    {id: 51, name: "الْحَقُّ", translation: "سچا اور قائم", value: 108},
+    {id: 52, name: "الْوَكِيلُ", translation: "کارساز", value: 66},
+    {id: 53, name: "الْقَوِيُّ", translation: "قوت والا", value: 116},
+    {id: 54, name: "الْمَتِينُ", translation: "مضبوط", value: 500},
+    {id: 55, name: "الْوَلِيُّ", translation: "دوست و مددگار", value: 46},
+    {id: 56, name: "الْحَمِيدُ", translation: "تعریف کے لائق", value: 62},
+    {id: 57, name: "الْمُحْصِي", translation: "شمار کرنے والا", value: 148},
+    {id: 58, name: "الْمُبْدِئُ", translation: "پہلی بار پیدا کرنے والا", value: 56},
+    {id: 59, name: "الْمُعِيدُ", translation: "دوبارہ پیدا کرنے والا", value: 124},
+    {id: 60, name: "الْمُحْيِي", translation: "زندگی دینے والا", value: 68},
+    {id: 61, name: "الْمُمِيتُ", translation: "موت دینے والا", value: 490},
+    {id: 62, name: "الْحَيُّ", translation: "ہمیشہ زندہ رہنے والا", value: 18},
+    {id: 63, name: "الْقَيُّومُ", translation: "سب کو قائم رکھنے والا", value: 156},
+    {id: 64, name: "الْوَاجِدُ", translation: "ہر چیز پانے والا", value: 14},
+    {id: 65, name: "الْمَاجِدُ", translation: "بزرگی والا", value: 48},
+    {id: 66, name: "الْوَاحِدُ", translation: "ایک (تنہا)", value: 19},
+    {id: 67, name: "الْأَحَدُ", translation: "یکتا", value: 13},
+    {id: 68, name: "الصَّمَدُ", translation: "بے نیاز", value: 134},
+    {id: 69, name: "الْقَادِرُ", translation: "قدرت رکھنے والا", value: 305},
+    {id: 70, name: "الْمُقْتَدِرُ", translation: "کامل قدرت والا", value: 744},
+    {id: 71, name: "الْمُقَدِّمُ", translation: "آگے کرنے والا", value: 184},
+    {id: 72, name: "الْمُؤَخِّرُ", translation: "پیچھے کرنے والا", value: 847},
+    {id: 73, name: "الْأَوَّلُ", translation: "سب سے پہلا", value: 37},
+    {id: 74, name: "الْآخِرُ", translation: "سب کے بعد رہنے والا", value: 801},
+    {id: 75, name: "الظَّاهِرُ", translation: "ظاہر و عیاں", value: 1106},
+    {id: 76, name: "الْبَاطِنُ", translation: "پوشیدہ", value: 62},
+    {id: 77, name: "الْوَالِي", translation: "مالک و سرپرست", value: 47},
+    {id: 78, name: "الْمُتَعَالِي", translation: "بہت بلند", value: 541},
+    {id: 79, name: "الْبَرُّ", translation: "احسان کرنے والا", value: 202},
+    {id: 80, name: "التَّوَّابُ", translation: "توبہ قبول کرنے والا", value: 409},
+    {id: 81, name: "الْمُنْتَقِمُ", translation: "بدلہ لینے والا", value: 630},
+    {id: 82, name: "الْعَفُوُّ", translation: "معاف کرنے والا", value: 156},
+    {id: 83, name: "الرَّؤُوفُ", translation: "شفقت کرنے والا", value: 287},
+    {id: 84, name: "مَالِكُ الْمُلْكِ", translation: "ملک کا مالک", value: 212},
+    {id: 85, name: "ذُو الْجَلَالِ وَالْإِكْرَامِ", translation: "عظمت اور جلال والا", value: 1100},
+    {id: 86, name: "الْمُقْسِطُ", translation: "عدل کرنے والا", value: 209},
+    {id: 87, name: "الْجَامِعُ", translation: "جمع کرنے والا", value: 114},
+    {id: 88, name: "الْغَنِيُّ", translation: "خود مختیار / بے نیاز", value: 1060},
+    {id: 89, name: "الْمُغْنِي", translation: "غنی کرنے والا", value: 1100},
+    {id: 90, name: "الْمَانِعُ", translation: "روکنے والا", value: 161},
+    {id: 91, name: "الضَّارُّ", translation: "نقصان پہنچانے والا", value: 1001},
+    {id: 92, name: "النَّافِعُ", translation: "نفع پہنچانے والا", value: 201},
+    {id: 93, name: "النُّورُ", translation: "منور کرنے والا", value: 256},
+    {id: 94, name: "الْهَادِي", translation: "ہدایت دینے والا", value: 20},
+    {id: 95, name: "الْبَدِيعُ", translation: "انوکھا پیدا کرنے والا", value: 86},
+    {id: 96, name: "الْبَاقِي", translation: "ہمیشہ رہنے والا", value: 113},
+    {id: 97, name: "الْوَارِثُ", translation: "سب کا وارث", value: 707},
+    {id: 98, name: "الرَّشِيدُ", translation: "سیدھی راہ دکھانے والا", value: 514},
+    {id: 99, name: "الصَّبُورُ", translation: "صبر کرنے والا", value: 298}
+];
+
+// 3. Calculator Function
+function calculateAbjad() {
+    const text = document.getElementById('userInput').value;
+    let total = 0;
+
+    for (let char of text) {
+        if (abjadMap[char]) {
+            total += abjadMap[char];
+        }
+    }
+    
+    document.getElementById('resultArea').innerText = `نام کے کل اعداد: ${total}`;
+    
+    if (total > 0) {
+        findIsmAzam(total);
+    } else {
+        document.getElementById('ismAzamBox').style.display = 'none';
+    }
+}
+
+// 4. Ism-e-Azam Logic
+function findIsmAzam(nameTotal) {
+    const target = nameTotal * 2;
+    const MAX_COMBINATIONS_PER_LEVEL = 20; // limit per group
+    const MAX_NAMES = 5;
+    const MAX_ITERATIONS = 100000; // پرفارمنس کے لیے لوپ کی حد
+
+    // Pruning کے لیے ناموں کو اعداد کے لحاظ سے ترتیب دیں
+    const sortedNames = [...allahNames].sort((a, b) => a.value - b.value);
+    
+    const matchesByCount = {};
+
+    for (let count = 1; count <= MAX_NAMES; count++) {
+        const currentLevelMatches = [];
+        let iterations = 0;
+        
+        function findCombinations(startIdx, currentSum, currentCombo) {
+            if (iterations > MAX_ITERATIONS) return;
+            if (currentLevelMatches.length >= MAX_COMBINATIONS_PER_LEVEL) return;
+            
+            if (currentCombo.length === count) {
+                if (currentSum === target) {
+                    currentLevelMatches.push([...currentCombo]);
+                }
+                return;
+            }
+            
+            for (let i = startIdx; i < sortedNames.length; i++) {
+                iterations++;
+                
+                if (currentSum + sortedNames[i].value > target) {
+                    break; 
+                }
+                
+                currentCombo.push(sortedNames[i]);
+                findCombinations(i + 1, currentSum + sortedNames[i].value, currentCombo);
+                currentCombo.pop();
+            }
+        }
+        
+        findCombinations(0, 0, []);
+        if (currentLevelMatches.length > 0) {
+            matchesByCount[count] = currentLevelMatches;
+        }
+    }
+
+    const ismBox = document.getElementById('ismAzamBox');
+    const ismDetails = document.getElementById('ismAzamDetails');
+    ismBox.style.display = 'block';
+
+    let html = `<p>مطلوبہ ہدف اعداد (ڈبل): <b>${nameTotal} + ${nameTotal} = ${target}</b></p>`;
+
+    let foundAny = false;
+    const numberLabels = {
+        1: 'سنگل اسمِ مبارک',
+        2: 'دو اسماء کا مجموعہ',
+        3: 'تین اسماء کا مجموعہ',
+        4: 'چار اسماء کا مجموعہ',
+        5: 'پانچ اسماء کا مجموعہ'
+    };
+
+    for (let count = 1; count <= MAX_NAMES; count++) {
+        if (matchesByCount[count] && matchesByCount[count].length > 0) {
+            foundAny = true;
+            let label = numberLabels[count] || `${count} اسماء کا مجموعہ`;
+            html += `<p><b>${label} (${matchesByCount[count].length}${matchesByCount[count].length >= MAX_COMBINATIONS_PER_LEVEL ? '+' : ''} ملے):</b></p><ul>`;
+            
+            matchesByCount[count].forEach(combo => {
+                const namesStr = combo.map(item => `<b>${item.name}</b> (${item.translation})`).join(' + ');
+                const valStr = count === 1 ? `اعداد: ${combo[0].value}` : `= <b>${target}</b>`;
+                html += `<li>${namesStr} ${valStr}</li>`;
+            });
+            html += `</ul>`;
+        }
+    }
+
+    if (!foundAny) {
+        html += `<p style="color: #c0392b;">اس عدد (${target}) کے مطابق کوئی اسم یا مجموعہ نہیں ملا (زیادہ سے زیادہ ${MAX_NAMES} اسماء تک تلاش کی گئی)۔</p>`;
+    } else {
+        html += `<p style="color: #1a5276; font-size: 14px; margin-top: 10px;">(نوٹ: براؤزر کی کارکردگی بہتر رکھنے کے لیے ہر کیٹیگری میں زیادہ سے زیادہ ${MAX_COMBINATIONS_PER_LEVEL} مجموعے دکھائے گئے ہیں۔)</p>`;
+    }
+
+    ismDetails.innerHTML = html;
+}
+
+// 5. Populate Asma-ul-Husna Table
+function renderNamesTable(data) {
+    const tbody = document.getElementById('namesTableBody');
+    tbody.innerHTML = '';
+    data.forEach(item => {
+        const row = `<tr>
+            <td>${item.id}</td>
+            <td><b>${item.name}</b></td>
+            <td>${item.translation}</td>
+            <td><b>${item.value}</b></td>
+        </tr>`;
+        tbody.innerHTML += row;
+    });
+}
+
+// 6. Advanced Search Function (Search by Name, Translation or Numbers)
+function filterNames() {
+    const query = document.getElementById('searchName').value.trim().toLowerCase();
+    const filtered = allahNames.filter(item => {
+        const nameMatch = item.name.includes(query);
+        const translationMatch = item.translation.includes(query);
+        const valueMatch = item.value.toString().includes(query);
+        const idMatch = item.id.toString() === query;
+
+        return nameMatch || translationMatch || valueMatch || idMatch;
+    });
+    renderNamesTable(filtered);
+}
+
+// Initial Table Render
+renderNamesTable(allahNames);
+</script>
+
+</body>
+</html>
