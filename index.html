@@ -5,70 +5,213 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>علم الاعداد اور اسماء الحسنیٰ ایپ</title>
     <style>
-        * { box-sizing: border-box; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        body { background-color: #f4f7f6; color: #333; margin: 0; padding: 20px; }
-        .container { max-width: 900px; margin: 0 auto; background: #fff; padding: 25px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        h1 { text-align: center; color: #1a5276; margin-bottom: 20px; }
-        
-        /* Tab Navigation Styling */
-        .tab-buttons { display: flex; justify-content: center; margin-bottom: 25px; gap: 10px; }
-        .tab-btn { padding: 12px 30px; font-size: 18px; border: none; background-color: #e5e7e9; color: #333; cursor: pointer; border-radius: 8px; font-weight: bold; transition: 0.3s; }
-        .tab-btn.active { background-color: #1a5276; color: white; }
-        .tab-content { display: none; }
-        .tab-content.active { display: block; }
+        :root {
+            --ink: #12354a;
+            --muted: #6d7e89;
+            --primary: #0f766e;
+            --primary-dark: #095e58;
+            --gold: #d89737;
+            --line: #dce9e7;
+            --surface: #ffffff;
+            --soft: #f2f8f7;
+            --shadow: 0 18px 55px rgba(17, 61, 78, .12);
+        }
 
-        /* Calculator Section */
-        .calculator-box { background: #ebf5fb; padding: 25px; border-radius: 8px; text-align: center; }
-        input[type="text"] { width: 80%; padding: 12px; font-size: 18px; border: 2px solid #aed6f1; border-radius: 6px; text-align: center; margin-bottom: 15px; }
-        button.action-btn { padding: 12px 25px; font-size: 16px; background-color: #1a5276; color: white; border: none; border-radius: 6px; cursor: pointer; transition: 0.3s; }
-        button.action-btn:hover { background-color: #117864; }
-        .result { font-size: 20px; font-weight: bold; margin-top: 15px; color: #117864; }
-        .letters-breakdown { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; margin-top: 15px; direction: rtl; }
-        .letter-box { background: #fff; border: 2px solid #aed6f1; border-radius: 8px; padding: 10px; min-width: 50px; text-align: center; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-        .letter-char { font-size: 22px; font-weight: bold; color: #1a5276; border-bottom: 1px solid #eee; padding-bottom: 5px; margin-bottom: 5px; }
-        .letter-val { font-size: 16px; color: #e67e22; font-weight: bold; }
-        .ism-azam-box { margin-top: 20px; padding: 15px; background: #e8f8f5; border: 1px solid #a3e4d7; border-radius: 8px; text-align: right; }
-        .ism-azam-box h3 { margin-top: 0; color: #117864; text-align: center; }
-        
-        /* 99 Names Table Styling */
-        .search-box { width: 100%; padding: 12px; margin-bottom: 15px; border: 2px solid #aed6f1; border-radius: 6px; font-size: 16px; text-align: right; }
-        .table-container { max-height: 500px; overflow-y: auto; overflow-x: auto; border: 1px solid #ddd; border-radius: 6px; }
-        table { width: 100%; border-collapse: collapse; text-align: center; }
-        th, td { padding: 12px; border-bottom: 1px solid #ddd; }
-        th { background-color: #1a5276; color: white; position: sticky; top: 0; }
-        tr:hover { background-color: #f2f2f2; }
-        ul { margin: 5px 0; padding-right: 20px; }
-        
-        /* Responsive Styling */
-        @media (max-width: 768px) {
-            body { padding: 10px; }
-            .container { padding: 15px; }
-            .tab-buttons { flex-direction: column; }
-            .tab-btn { width: 100%; padding: 12px; font-size: 16px; margin-bottom: 5px; }
-            input[type="text"] { width: 100%; }
-            th, td { padding: 8px; font-size: 14px; }
-            .action-btn { width: 100%; }
-            .result { font-size: 18px; }
-            .ism-azam-box { text-align: center; }
-            ul { padding-right: 0; list-style-type: none; }
+        * { box-sizing: border-box; font-family: "Noto Naskh Arabic", "Segoe UI", Tahoma, sans-serif; }
+        body { min-height: 100vh; margin: 0; padding: 32px; color: var(--ink); background: radial-gradient(circle at 12% 12%, #d9f3ef 0, transparent 28%), radial-gradient(circle at 90% 0, #f9ead1 0, transparent 25%), #edf5f4; }
+        button, input { font: inherit; }
+        button { -webkit-tap-highlight-color: transparent; }
+        .container { width: min(1180px, 100%); min-height: calc(100vh - 64px); margin: 0 auto; padding: 30px; background: rgba(255,255,255,.94); border: 1px solid rgba(255,255,255,.8); border-radius: 28px; box-shadow: var(--shadow); }
+
+        .app-header { display: flex; align-items: center; gap: 16px; padding: 0 4px 26px; }
+        .brand-mark { display: grid; place-items: center; width: 58px; height: 58px; flex: 0 0 auto; border-radius: 18px 18px 18px 5px; color: #fff; font-size: 31px; font-weight: 800; background: linear-gradient(145deg, #16998e, #0c665f); box-shadow: 0 10px 24px rgba(15,118,110,.24); }
+        .app-heading { flex: 1; }
+        .eyebrow { margin: 0 0 2px; color: var(--primary); font-size: 13px; font-weight: 700; letter-spacing: .03em; }
+        h1 { margin: 0; color: var(--ink); font-size: clamp(25px, 3vw, 34px); line-height: 1.2; }
+        .app-subtitle { margin: 4px 0 0; color: var(--muted); font-size: 15px; }
+        .header-badge { min-width: 84px; padding: 10px 14px; border: 1px solid #f0dfbe; border-radius: 15px; color: #93601b; background: #fff8e9; text-align: center; line-height: 1.15; }
+        .header-badge b { display: block; font-size: 20px; }
+        .header-badge span { font-size: 12px; }
+
+        .tab-buttons { display: inline-flex; gap: 5px; margin: 0 0 28px; padding: 5px; border: 1px solid var(--line); border-radius: 17px; background: #f8fbfb; }
+        .tab-btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 45px; padding: 9px 18px; border: 0; border-radius: 12px; color: var(--muted); background: transparent; cursor: pointer; font-weight: 700; font-size: 15px; transition: background .2s, color .2s, box-shadow .2s, transform .2s; }
+        .tab-btn:hover { color: var(--primary); }
+        .tab-btn.active { color: #fff; background: var(--primary); box-shadow: 0 7px 16px rgba(15,118,110,.22); }
+        .tab-icon { width: 20px; height: 20px; flex: 0 0 auto; stroke: currentColor; stroke-width: 1.9; fill: none; stroke-linecap: round; stroke-linejoin: round; }
+        .tab-content { display: none; animation: fade-in .22s ease-out; }
+        .tab-content.active { display: block; }
+        @keyframes fade-in { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+        .calculator-box, .names-panel, .chart-panel { border: 1px solid var(--line); border-radius: 22px; background: var(--surface); box-shadow: 0 8px 22px rgba(18,53,74,.04); }
+        .calculator-box { position: relative; overflow: hidden; padding: clamp(22px, 4vw, 40px); text-align: center; background: linear-gradient(135deg, #f3fbfa, #ffffff 60%); }
+        .calculator-box::before { content: ""; position: absolute; top: -100px; left: -90px; width: 240px; height: 240px; border: 35px solid rgba(28,148,137,.06); border-radius: 50%; pointer-events: none; }
+        .section-kicker { position: relative; margin: 0 0 5px; color: var(--primary); font-size: 14px; font-weight: 800; }
+        .section-title { position: relative; margin: 0 0 24px; font-size: clamp(22px, 3vw, 28px); }
+        .input-wrap { position: relative; z-index: 1; width: min(690px, 100%); margin: 0 auto; }
+        .input-wrap::before { content: "✦"; position: absolute; top: 16px; right: 18px; color: var(--gold); font-size: 19px; }
+        input[type="text"] { width: 100%; min-height: 58px; padding: 12px 48px 12px 18px; border: 1.5px solid #cbdedb; border-radius: 15px; outline: none; color: var(--ink); background: #fff; font-size: 19px; text-align: right; transition: border .2s, box-shadow .2s; }
+        input[type="text"]:focus { border-color: #57a79f; box-shadow: 0 0 0 4px rgba(15,118,110,.11); }
+        input[type="text"]::placeholder { color: #97a7ac; }
+        button.action-btn { position: relative; z-index: 1; min-width: 250px; min-height: 52px; margin-top: 14px; padding: 11px 24px; border: 0; border-radius: 14px; color: #fff; background: linear-gradient(135deg, #11877d, #0b665f); cursor: pointer; box-shadow: 0 10px 20px rgba(15,118,110,.22); font-size: 16px; font-weight: 800; transition: transform .2s, box-shadow .2s; }
+        button.action-btn:hover { box-shadow: 0 13px 25px rgba(15,118,110,.29); transform: translateY(-1px); }
+        button.action-btn:active { transform: translateY(1px); }
+        .result { display: inline-block; position: relative; margin-top: 22px; padding: 13px 24px; border-radius: 14px; color: var(--primary-dark); background: #e6f5f2; font-size: 20px; font-weight: 800; }
+        .letters-breakdown { display: flex; position: relative; flex-wrap: wrap; justify-content: center; gap: 9px; margin-top: 20px; direction: rtl; }
+        .letter-box { min-width: 58px; padding: 9px 11px; border: 1px solid #d5e7e4; border-radius: 13px; background: #fff; box-shadow: 0 5px 10px rgba(18,53,74,.04); text-align: center; }
+        .letter-char { margin-bottom: 4px; padding-bottom: 4px; border-bottom: 1px solid #edf2f1; color: var(--ink); font-size: 22px; font-weight: 800; }
+        .letter-val { color: var(--gold); font-size: 15px; font-weight: 800; }
+        .ism-azam-box { position: relative; margin-top: 26px; padding: 22px; border: 1px solid #bde4dd; border-radius: 18px; color: var(--ink); background: #f0faf8; text-align: right; }
+        .ism-azam-box h3 { margin: 0 0 12px; color: var(--primary-dark); font-size: 20px; text-align: right; }
+
+        .names-panel, .chart-panel { padding: clamp(18px, 3vw, 28px); }
+        .panel-heading { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 20px; }
+        .panel-heading h2 { margin: 0; color: var(--ink); font-size: 24px; }
+        .count-badge { padding: 7px 12px; border-radius: 999px; color: var(--primary-dark); background: #e6f5f2; font-size: 13px; font-weight: 800; white-space: nowrap; }
+        .search-wrap { position: relative; margin-bottom: 18px; }
+        .search-wrap::before { content: "⌕"; position: absolute; top: 12px; right: 15px; z-index: 1; color: var(--primary); font-size: 25px; line-height: 1; }
+        .search-box { min-height: 52px; padding-right: 48px !important; font-size: 16px !important; }
+        .names-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; max-height: 600px; padding: 2px; overflow-y: auto; }
+        .name-card { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 12px; min-height: 84px; padding: 13px; border: 1px solid #e2eeec; border-radius: 17px; background: #fff; transition: border .2s, box-shadow .2s, transform .2s; }
+        .name-card:hover { border-color: #acd6d0; box-shadow: 0 8px 16px rgba(18,53,74,.07); transform: translateY(-1px); }
+        .name-order { display: grid; place-items: center; width: 32px; height: 32px; border-radius: 10px; color: var(--primary-dark); background: #e9f6f4; font-size: 13px; font-weight: 800; }
+        .name-button { border: 0; padding: 0; color: var(--ink); background: transparent; cursor: pointer; text-align: right; }
+        .name-button:hover .name-title, .name-button:focus .name-title { color: var(--primary); }
+        .name-title { display: block; font-size: 19px; font-weight: 800; transition: color .2s; }
+        .name-translation { display: block; margin-top: 2px; color: var(--muted); font-size: 13px; line-height: 1.45; }
+        .value-pill { min-width: 52px; padding: 7px 8px; border-radius: 11px; color: #9b6418; background: #fff5e6; text-align: center; }
+        .value-pill small { display: block; color: #a8895f; font-size: 10px; }
+        .value-pill b { display: block; font-size: 17px; direction: ltr; }
+        .empty-state { grid-column: 1 / -1; padding: 34px 15px; border: 1px dashed #b6d5d0; border-radius: 17px; color: var(--muted); background: #f8fbfb; text-align: center; }
+        .chart-panel h2 { margin: 0; color: var(--ink); font-size: 24px; text-align: right !important; }
+        .letter-keyboard { display: grid; grid-template-columns: repeat(10, minmax(52px, 1fr)); gap: 10px; margin-top: 22px; }
+        .letter-key { min-height: 72px; padding: 8px; border: 1px solid #d4e7e4; border-radius: 15px; color: var(--ink); background: linear-gradient(145deg, #fff, #f3faf9); cursor: pointer; box-shadow: 0 5px 10px rgba(18,53,74,.04); transition: transform .16s, border .16s, background .16s, box-shadow .16s; }
+        .letter-key:hover { border-color: #83c1b9; background: #eaf7f4; box-shadow: 0 8px 14px rgba(15,118,110,.12); transform: translateY(-2px); }
+        .letter-key:active { transform: translateY(1px); }
+        .letter-key .letter-char { display: block; margin-bottom: 4px; padding-bottom: 4px; }
+        .space-key { grid-column: span 2; color: var(--primary-dark); background: #e8f5f2; }
+        .space-key .letter-char { font-size: 16px; }
+        .chart-workspace { margin-top: 26px; padding: 18px; border: 1px solid #cce4e0; border-radius: 18px; background: #f2faf8; }
+        .chart-workspace-top { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
+        .chart-workspace-title { margin: 0; color: var(--primary-dark); font-size: 17px; font-weight: 800; }
+        .chart-actions { display: flex; gap: 7px; }
+        .chart-action { min-height: 34px; padding: 5px 10px; border: 1px solid #bedbd6; border-radius: 9px; color: var(--primary-dark); background: #fff; cursor: pointer; font-size: 13px; font-weight: 700; }
+        .chart-action:hover { background: #e3f3f0; }
+        .chart-text { display: flex; align-items: center; min-height: 60px; padding: 12px 15px; border: 1px solid #d6e7e5; border-radius: 13px; color: var(--ink); background: #fff; font-size: 24px; font-weight: 800; letter-spacing: .06em; overflow-wrap: anywhere; }
+        .chart-text.is-empty { color: #94a6aa; font-size: 14px; font-weight: 500; letter-spacing: 0; }
+        .chart-total { display: inline-block; margin-top: 12px; padding: 8px 14px; border-radius: 10px; color: #8f5a16; background: #fff3df; font-size: 16px; font-weight: 800; }
+        ul { margin: 7px 0; padding-right: 20px; }
+
+        @media (max-width: 760px) {
+            body { padding: 0; background: #fff; }
+            .container { width: 100%; min-height: 100vh; padding: 22px 16px 96px; border: 0; border-radius: 0; box-shadow: none; }
+            .app-header { padding: 0 3px 21px; }
+            .brand-mark { width: 48px; height: 48px; border-radius: 15px 15px 15px 4px; font-size: 26px; }
+            .app-subtitle { font-size: 13px; }
+            .header-badge { min-width: 59px; padding: 8px; }
+            .header-badge b { font-size: 17px; }
+            .header-badge span { font-size: 10px; }
+            .tab-buttons { position: fixed; right: 0; bottom: 0; left: 0; z-index: 20; display: flex; justify-content: space-around; width: 100%; margin: 0; padding: 8px max(14px, env(safe-area-inset-right)) calc(8px + env(safe-area-inset-bottom)) max(14px, env(safe-area-inset-left)); border: 0; border-top: 1px solid #dce9e7; border-radius: 22px 22px 0 0; background: rgba(255,255,255,.96); box-shadow: 0 -8px 28px rgba(18,53,74,.10); backdrop-filter: blur(14px); }
+            .tab-btn { flex: 1; flex-direction: column; gap: 4px; min-height: 61px; padding: 4px 5px; border-radius: 13px; font-size: 11px; }
+            .tab-btn.active { color: var(--primary-dark); background: #e7f5f2; box-shadow: none; }
+            .tab-icon { display: block; width: 31px; height: 31px; padding: 6px; border: 1px solid #dceae8; border-radius: 10px; color: #5d7b82; background: #f6fbfa; }
+            .tab-btn.active .tab-icon { border-color: var(--primary); color: #fff; background: var(--primary); box-shadow: 0 5px 10px rgba(15,118,110,.2); }
+            .calculator-box, .names-panel, .chart-panel { border-radius: 19px; }
+            .calculator-box { padding: 24px 16px; }
+            .section-title { margin-bottom: 20px; }
+            input[type="text"] { min-height: 55px; font-size: 17px; }
+            button.action-btn { width: 100%; min-width: 0; }
+            .result { width: 100%; font-size: 18px; }
+            .letter-box { min-width: 52px; }
+            .names-panel, .chart-panel { padding: 17px 13px; }
+            .panel-heading h2, .chart-panel h2 { font-size: 21px; }
+            .letter-keyboard { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; }
+            .letter-key { min-height: 64px; border-radius: 13px; }
+            .chart-workspace { padding: 14px; }
+            .chart-text { min-height: 55px; font-size: 22px; }
+            .names-list { grid-template-columns: 1fr; max-height: none; }
+            .name-card { min-height: 76px; padding: 11px; }
+            .name-title { font-size: 18px; }
+            .ism-azam-box { padding: 18px 14px; font-size: 14px; }
+            .ism-azam-box h3 { font-size: 18px; }
+
+            /* چھوٹی اسکرین پر ایک گھنا، ایپ جیسا لے آؤٹ */
+            .container { padding: 16px 12px 82px; }
+            .app-header { gap: 11px; padding: 0 2px 16px; }
+            .brand-mark { width: 43px; height: 43px; border-radius: 14px 14px 14px 4px; font-size: 23px; }
+            .eyebrow { font-size: 11px; }
+            h1 { font-size: 24px; }
+            .app-subtitle { font-size: 12px; }
+            .header-badge { min-width: 54px; padding: 6px; }
+            .tab-buttons { padding: 6px max(10px, env(safe-area-inset-right)) calc(6px + env(safe-area-inset-bottom)) max(10px, env(safe-area-inset-left)); border-radius: 18px 18px 0 0; }
+            .tab-btn { gap: 3px; min-height: 54px; padding: 3px 4px; border-radius: 11px; font-size: 10px; }
+            .tab-icon { width: 28px; height: 28px; padding: 5px; border-radius: 9px; }
+            .calculator-box { padding: 20px 12px; }
+            .section-kicker { font-size: 12px; }
+            .section-title { margin-bottom: 16px; font-size: 20px; }
+            input[type="text"] { min-height: 50px; font-size: 16px; }
+            button.action-btn { min-height: 48px; margin-top: 10px; font-size: 14px; }
+            .result { margin-top: 16px; padding: 11px; font-size: 16px; }
+            .letters-breakdown { gap: 7px; margin-top: 15px; }
+            .letter-box { min-width: 46px; padding: 7px 9px; border-radius: 11px; }
+            .letter-char { font-size: 20px; }
+            .names-panel, .chart-panel { padding: 15px 11px; }
+            .panel-heading { margin-bottom: 15px; }
+            .panel-heading h2, .chart-panel h2 { font-size: 19px; }
+            .count-badge { padding: 6px 9px; font-size: 11px; }
+            .search-box { min-height: 47px; font-size: 14px !important; }
+            .names-list { gap: 9px; }
+            .name-card { min-height: 69px; padding: 9px; border-radius: 14px; }
+            .name-title { font-size: 16px; }
+            .name-translation { font-size: 11px; }
+            .letter-keyboard { gap: 6px; margin-top: 16px; }
+            .letter-key { min-height: 53px; padding: 5px; border-radius: 11px; }
+            .letter-key .letter-char { margin-bottom: 2px; padding-bottom: 2px; font-size: 19px; }
+            .letter-key .letter-val { font-size: 12px; }
+            .space-key .letter-char { font-size: 13px !important; }
+            .chart-workspace { margin-top: 18px; padding: 12px; border-radius: 15px; }
+            .chart-workspace-top { margin-bottom: 9px; }
+            .chart-workspace-title { font-size: 14px; }
+            .chart-actions { gap: 5px; }
+            .chart-action { min-height: 30px; padding: 4px 7px; font-size: 11px; }
+            .chart-text { min-height: 48px; padding: 9px 11px; border-radius: 11px; font-size: 19px; }
+            .chart-total { margin-top: 9px; padding: 6px 10px; font-size: 14px; }
+        }
+
+        @media (min-width: 761px) and (max-width: 980px) {
+            .names-list { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>علم الاعداد اور اسماء الحسنیٰ ایپ</h1>
+    <header class="app-header">
+        <div class="brand-mark" aria-hidden="true">ا</div>
+        <div class="app-heading">
+            <p class="eyebrow">علمِ ابجد</p>
+            <h1>علم الاعداد</h1>
+            <p class="app-subtitle">اسماء الحسنیٰ اور حروف کے اعداد</p>
+        </div>
+        <div class="header-badge"><b>99</b><span>اسماء الحسنیٰ</span></div>
+    </header>
     
     <div class="tab-buttons">
-        <button class="tab-btn active" onclick="switchTab('calculatorTab', this)">اعداد و اسمِ اعظم</button>
-        <button class="tab-btn" onclick="switchTab('namesTab', this)">اسماء الحسنیٰ</button>
-        <button class="tab-btn" onclick="switchTab('chartTab', this)">حروفِ ابجد چارٹ</button>
+        <button class="tab-btn active" onclick="switchTab('calculatorTab', this)">
+            <svg class="tab-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="3" width="16" height="18" rx="3"></rect><path d="M8 7h8M8 12h.01M12 12h.01M16 12h.01M8 16h.01M12 16h.01M16 16h.01"></path></svg><span>کیلکولیٹر</span>
+        </button>
+        <button class="tab-btn" onclick="switchTab('namesTab', this)">
+            <svg class="tab-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5.5A2.5 2.5 0 0 1 6.5 3H11v16H6.5A2.5 2.5 0 0 0 4 21.5zM20 5.5A2.5 2.5 0 0 0 17.5 3H13v16h4.5a2.5 2.5 0 0 1 2.5 2.5z"></path><path d="M7 7h1.5M15.5 7H17"></path></svg><span>اسماء الحسنیٰ</span>
+        </button>
+        <button class="tab-btn" onclick="switchTab('chartTab', this)">
+            <svg class="tab-icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="4" width="5" height="5" rx="1"></rect><rect x="15" y="4" width="5" height="5" rx="1"></rect><rect x="4" y="15" width="5" height="5" rx="1"></rect><rect x="15" y="15" width="5" height="5" rx="1"></rect></svg><span>حروفِ ابجد</span>
+        </button>
     </div>
 
     <div id="calculatorTab" class="tab-content active">
         <div class="calculator-box">
-            <input type="text" id="userInput" placeholder="یہاں اپنا نام یا جملہ لکھیں...">
-            <br>
+            <p class="section-kicker">اپنا حساب معلوم کریں</p>
+            <h2 class="section-title">نام یا جملہ درج کریں</h2>
+            <div class="input-wrap"><input type="text" id="userInput" placeholder="یہاں اپنا نام یا جملہ لکھیں..." aria-label="نام یا جملہ"></div>
             <button class="action-btn" onclick="calculateAbjad()">اعداد اور اسمِ اعظم معلوم کریں</button>
             <div id="lettersBreakdown" class="letters-breakdown"></div>
             <div class="result" id="resultArea">نام کے کل اعداد: 0</div>
@@ -81,27 +224,35 @@
     </div>
 
     <div id="namesTab" class="tab-content">
-        <input type="text" id="searchName" class="search-box" placeholder="نام یا اعداد کے ذریعے تلاش کریں..." onkeyup="filterNames()">
-        
-        <div class="table-container">
-            <table>
-                <thead>
-                    <tr>
-                        <th>نمبر</th>
-                        <th>اسم مبارک</th>
-                        <th>ترجمہ (معنی)</th>
-                        <th>اعداد (قیمت)</th>
-                    </tr>
-                </thead>
-                <tbody id="namesTableBody">
-                    </tbody>
-            </table>
-        </div>
+        <section class="names-panel">
+            <div class="panel-heading">
+                <h2>اسماء الحسنیٰ</h2>
+                <span class="count-badge">99 مبارک نام</span>
+            </div>
+            <div class="search-wrap"><input type="text" id="searchName" class="search-box" placeholder="نام، معنی یا اعداد سے تلاش کریں..." onkeyup="filterNames()" aria-label="اسماء الحسنیٰ میں تلاش"></div>
+            <div class="names-list" id="namesTableBody"></div>
+        </section>
     </div>
 
     <div id="chartTab" class="tab-content">
-        <h2 style="text-align: center; color: #1a5276; margin-bottom: 20px;">علم الاعداد (حروفِ ابجد) کا چارٹ</h2>
-        <div class="letters-breakdown" id="abjadChartGrid"></div>
+        <section class="chart-panel">
+            <div class="panel-heading">
+                <h2>حروفِ ابجد کا چارٹ</h2>
+                <span class="count-badge">ابجدِ کبیر</span>
+            </div>
+            <div class="letter-keyboard" id="abjadChartGrid"></div>
+            <div class="chart-workspace">
+                <div class="chart-workspace-top">
+                    <p class="chart-workspace-title">منتخب حروف</p>
+                    <div class="chart-actions">
+                        <button type="button" class="chart-action" onclick="removeLastChartLetter()">ایک حرف حذف کریں</button>
+                        <button type="button" class="chart-action" onclick="clearChartLetters()">صاف کریں</button>
+                    </div>
+                </div>
+                <div id="chartTypedText" class="chart-text is-empty" aria-live="polite">اوپر کسی حرف پر کلک کریں</div>
+                <div id="chartTotal" class="chart-total" aria-live="polite">کل اعداد: 0</div>
+            </div>
+        </section>
     </div>
 </div>
 
@@ -172,6 +323,14 @@ function computeValue(text) {
         if (abjadMap[ch]) total += abjadMap[ch];
     }
     return total;
+}
+
+// فہرست کے لیے معرفہ "ال" ہٹائیں، چاہے وہ نام کے شروع میں ہو یا مرکب نام کے کسی جز میں ہو
+function removeDefiniteArticle(text) {
+    return text
+        .replace(/^الْ?/, '')
+        .replace(/(\s)الْ?/g, '$1')
+        .replace(/(و[\u064B-\u065F\u0670]?)الْ?/g, '$1');
 }
 
 // 2. 99 Names of Allah with Meanings & Values (values will be recalculated)
@@ -277,8 +436,9 @@ const allahNames = [
     {id: 99, name: "الصَّبُورُ", translation: "صبر کرنے والا", value: null}
 ];
 
-// Recalculate and assign values to ensure correctness
+// فہرست کو "ال" کے بغیر دکھائیں اور اسی املا سے اعداد نکالیں
 allahNames.forEach(item => {
+    item.name = removeDefiniteArticle(item.name);
     item.value = computeValue(item.name);
 });
 
@@ -310,6 +470,18 @@ function calculateAbjad() {
     } else {
         document.getElementById('ismAzamBox').style.display = 'none';
     }
+}
+
+// فہرست سے نام منتخب کرنے پر بالکل وہی مکمل املا کیلکولیٹر میں استعمال کریں
+function calculateNameFromList(id) {
+    const item = allahNames.find(name => name.id === id);
+    if (!item) return;
+
+    document.getElementById('userInput').value = item.name;
+    const calculatorTabButton = document.querySelector('.tab-btn[onclick*="calculatorTab"]');
+    switchTab('calculatorTab', calculatorTabButton);
+    calculateAbjad();
+    document.getElementById('userInput').focus();
 }
 
 // 4. Ism-e-Azam Logic
@@ -410,13 +582,19 @@ function findIsmAzam(nameTotal) {
 function renderNamesTable(data) {
     const tbody = document.getElementById('namesTableBody');
     tbody.innerHTML = '';
+    if (data.length === 0) {
+        tbody.innerHTML = '<div class="empty-state">آپ کی تلاش سے متعلق کوئی اسم نہیں ملا۔</div>';
+        return;
+    }
     data.forEach(item => {
-        const row = `<tr>
-            <td>${item.id}</td>
-            <td><b>${item.name}</b></td>
-            <td>${item.translation}</td>
-            <td><b>${item.value}</b></td>
-        </tr>`;
+        const row = `<article class="name-card">
+            <span class="name-order">${item.id}</span>
+            <button type="button" class="name-button" onclick="calculateNameFromList(${item.id})" title="اسی املا کے ساتھ کیلکولیٹر میں چیک کریں">
+                <span class="name-title">${item.name}</span>
+                <span class="name-translation">${item.translation}</span>
+            </button>
+            <span class="value-pill"><small>اعداد</small><b>${item.value}</b></span>
+        </article>`;
         tbody.innerHTML += row;
     });
 }
@@ -442,7 +620,41 @@ function filterNames() {
     renderNamesTable(filtered);
 }
 
-// 7. Render Abjad Chart
+// 7. Interactive Abjad Keyboard
+let chartText = '';
+
+function updateChartWorkspace() {
+    const typedText = document.getElementById('chartTypedText');
+    const totalElement = document.getElementById('chartTotal');
+    const total = computeValue(chartText);
+
+    typedText.textContent = chartText || 'اوپر کسی حرف پر کلک کریں';
+    typedText.classList.toggle('is-empty', chartText.length === 0);
+    totalElement.textContent = `کل اعداد: ${total}`;
+}
+
+function addChartLetter(char) {
+    chartText += char;
+    updateChartWorkspace();
+}
+
+function addChartSpace() {
+    if (chartText && !chartText.endsWith(' ')) {
+        chartText += ' ';
+        updateChartWorkspace();
+    }
+}
+
+function removeLastChartLetter() {
+    chartText = chartText.slice(0, -1);
+    updateChartWorkspace();
+}
+
+function clearChartLetters() {
+    chartText = '';
+    updateChartWorkspace();
+}
+
 function renderAbjadChart() {
     const grid = document.getElementById('abjadChartGrid');
     let html = '';
@@ -457,12 +669,17 @@ function renderAbjadChart() {
     
     displayChars.forEach(char => {
         if (abjadMap[char]) {
-            html += `<div class="letter-box">
+            html += `<button type="button" class="letter-key" onclick="addChartLetter('${char}')" aria-label="حرف ${char} شامل کریں">
                 <div class="letter-char">${char}</div>
                 <div class="letter-val">${abjadMap[char]}</div>
-            </div>`;
+            </button>`;
         }
     });
+
+    html += `<button type="button" class="letter-key space-key" onclick="addChartSpace()" aria-label="اسپیس شامل کریں">
+        <div class="letter-char">اسپیس</div>
+        <div class="letter-val">فاصلہ</div>
+    </button>`;
     
     grid.innerHTML = html;
 }
@@ -470,6 +687,7 @@ function renderAbjadChart() {
 // Initial Render
 renderNamesTable(allahNames);
 renderAbjadChart();
+updateChartWorkspace();
 </script>
 
 </body>
